@@ -8,21 +8,16 @@ from reflex_core import AWSRule
 
 
 class DynamoDBPointInTimeRecoveryDisabled(AWSRule):
-    """ TODO: A description for your rule """
+    """ A Reflex Rule for ensuring enablement of Point in Time Recovery for DynamoDB tables """
 
-    # TODO: Instantiate whatever boto3 client you'll need, if any.
-    # Example:
-    # client = boto3.client("s3")
+    client = boto3.client("dynamodb")
 
     def __init__(self, event):
         super().__init__(event)
 
     def extract_event_data(self, event):
         """ Extract required event data """
-        # TODO: Extract any data you need from the triggering event.
-        #
-        # Example:
-        # self.bucket_name = event["detail"]["requestParameters"]["bucketName"]
+        self.table_name = event["detail"]["requestParameters"]["tableName"]
 
     def resource_compliant(self):
         """
@@ -30,23 +25,30 @@ class DynamoDBPointInTimeRecoveryDisabled(AWSRule):
 
         Return True if it is compliant, and False if it is not.
         """
-        # TODO: Implement a check for determining if the resource is compliant
+        response = self.client.describe_continuous_backups(TableName=self.table_name)
+
+        return (
+            response["ContinuousBackupsDescription"]["PointInTimeRecoveryDescription"][
+                "PointInTimeRecoveryStatus"
+            ]
+            == "ENABLED"
+        )
 
     def remediate(self):
         """
         Fix the non-compliant resource so it conforms to the rule
         """
-        # TODO (Optional): Fix the non-compliant resource. This only needs to 
-        # be implemented for rules that remediate non-compliant resources.
-        # Purely detective rules can omit this function.
+        self.client.update_continuous_backups(
+            TableName=self.table_name,
+            PointInTimeRecoverySpecification={"PointInTimeRecoveryEnabled": True},
+        )
 
     def get_remediation_message(self):
         """ Returns a message about the remediation action that occurred """
-        # TODO: Provide a human readable message describing what occured. This
-        # message is sent in all notifications.
-        #
-        # Example:
-        # return f"The S3 bucket {self.bucket_name} was unencrypted. AES-256 encryption was enabled."
+        message = f"Point in Time Recovery was disabled for {self.table_name}. "
+        if self.should_remediate():
+            message += "It has been re-enabled."
+        return message
 
 
 def lambda_handler(event, _):

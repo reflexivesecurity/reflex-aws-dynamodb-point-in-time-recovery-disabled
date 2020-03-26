@@ -1,10 +1,26 @@
 module "reflex_aws_dynamodb_point_in_time_recovery_disabled" {
   source           = "git::https://github.com/cloudmitigator/reflex-engine.git//modules/cwe_lambda?ref=v0.5.4"
   rule_name        = "DynamoDBPointInTimeRecoveryDisabled"
-  rule_description = "TODO: Provide rule description"
+  rule_description = "A Reflex Rule for ensuring enablement of Point in Time Recovery for DynamoDB tables."
 
   event_pattern = <<PATTERN
-# TODO: Provide event pattern
+{
+  "source": [
+    "aws.dynamodb"
+  ],
+  "detail-type": [
+    "AWS API Call via CloudTrail"
+  ],
+  "detail": {
+    "eventSource": [
+      "dynamodb.amazonaws.com"
+    ],
+    "eventName": [
+      "CreateTable",
+      "UpdateContinuousBackups"
+    ]
+  }
+}
 PATTERN
 
   function_name   = "DynamoDBPointInTimeRecoveryDisabled"
@@ -16,7 +32,19 @@ PATTERN
     MODE      = var.mode
   }
   custom_lambda_policy = <<EOF
-# TODO: Provide required lambda permissions policy
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": [
+        "dynamodb:DescribeContinuousBackups",
+        "dynamodb:UpdateContinuousBackups"
+      ],
+      "Effect": "Allow",
+      "Resource": "*"
+    }
+  ]
+}
 EOF
 
 

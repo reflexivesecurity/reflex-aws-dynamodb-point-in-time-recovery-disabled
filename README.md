@@ -1,5 +1,5 @@
 # reflex-aws-dynamodb-point-in-time-recovery-disabled
-TODO: Write a brief description of your rule and what it does.
+A Reflex Rule for ensuring enablement of Point in Time Recovery for DynamoDB tables.
 
 ## Usage
 To use this rule either add it to your `reflex.yaml` configuration file:  
