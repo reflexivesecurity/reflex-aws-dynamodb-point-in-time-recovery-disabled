@@ -1,5 +1,5 @@
 module "reflex_aws_dynamodb_point_in_time_recovery_disabled" {
-  source           = "git::https://github.com/cloudmitigator/reflex-engine.git//modules/cwe_lambda?ref=v0.5.7"
+  source           = "git::https://github.com/cloudmitigator/reflex-engine.git//modules/cwe_lambda?ref=v0.5.8"
   rule_name        = "DynamoDBPointInTimeRecoveryDisabled"
   rule_description = "A Reflex Rule for ensuring enablement of Point in Time Recovery for DynamoDB tables."
 
