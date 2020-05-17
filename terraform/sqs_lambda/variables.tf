@@ -13,3 +13,12 @@ variable "mode" {
   type        = string
   default     = "detect"
 }
+variable "cloudwatch_event_rule_id" {
+  description = "Easy name of CWE"
+  type        = string
+}
+
+variable "cloudwatch_event_rule_arn" {
+  description = "Full arn of CWE"
+  type        = string
+}
