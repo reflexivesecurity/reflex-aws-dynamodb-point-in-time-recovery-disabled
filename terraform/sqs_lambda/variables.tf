@@ -22,3 +22,9 @@ variable "cloudwatch_event_rule_arn" {
   description = "Full arn of CWE"
   type        = string
 }
+
+variable "package_location" {
+  description = "Path for the Lambda deployment package"
+  type        = string
+  default     = "../package_build/dynamodb-point-in-time-recovery-disabled.zip"
+}
